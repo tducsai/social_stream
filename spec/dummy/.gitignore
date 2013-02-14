@@ -4,6 +4,7 @@ db/*.sqlite3-journal
 db/sphinx
 documents
 log/*log
+log/*pid
 public/images/tmp/
 public/system
 tmp/*

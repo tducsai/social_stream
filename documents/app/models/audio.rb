@@ -6,11 +6,4 @@ class Audio < Document
                     :processors => [ :ffmpeg, :waveform ]
   
   process_in_background :file    
-  
-  define_index do
-    activity_object_index
-
-    indexes file_file_name, :as => :file_name
-  end 
-              
 end

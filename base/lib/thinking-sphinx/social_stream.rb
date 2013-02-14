@@ -1,3 +1,3 @@
 require 'social_stream/base/thinking-sphinx'
 
-ThinkingSphinx::Index::Builder.send :include, SocialStream::Base::ThinkingSphinx::Index::Builder
+ThinkingSphinx::ActiveRecord::Interpreter.send :include, SocialStream::Base::ThinkingSphinx::ActiveRecord::Interpreter

@@ -7,12 +7,6 @@ class Link < ActiveRecord::Base
 
   before_create :check_loaded
 
-  define_index do
-    activity_object_index
-
-    indexes url
-  end
-
   def fill linkser_object
     self.title = linkser_object.title if linkser_object.title
     self.description = linkser_object.description if linkser_object.description

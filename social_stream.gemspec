@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
     # https://t.co/zKY52Efr
     s.add_development_dependency('pg', '0.12.0')
   else
-    s.add_development_dependency('mysql2')
+    s.add_development_dependency('mysql2', '~> 0.3.12')
   end
   # Debugging
   unless ENV["CI"]

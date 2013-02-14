@@ -8,12 +8,6 @@ class Video < Document
                     
   process_in_background :file
   
-  define_index do
-    activity_object_index
-
-    indexes file_file_name, :as => :file_name
-  end
-                      
  # JSON, special edition for video files
   def as_json(options = nil)
     {:id => id,

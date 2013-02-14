@@ -14,12 +14,6 @@ class Document < ActiveRecord::Base
     set_title
   end
   
-  define_index do
-    activity_object_index
-
-    indexes file_file_name, :as => :file_name
-  end
-  
   class << self 
     def new(*args)
       # If already called from subtype, continue through the stack
