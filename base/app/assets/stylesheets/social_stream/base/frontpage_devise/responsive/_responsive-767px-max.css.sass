@@ -24,7 +24,7 @@
       padding: 0
       float: none
       h3
-        margin: 17px 12px 20px 0
+        margin: 0px 12px 0px 0
       form.new_user
         padding: 0 10px
         .login_data
@@ -59,9 +59,13 @@
 
 
 
-  #forgot-pass
+  #forgot-pass,
+  #confirmation,
+  #login
     margin-left: 0
-    .forgot
+    .forgot,
+    .instructions,
+    .change
       @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
       margin-top: 0px
       padding: 0 
@@ -75,10 +79,10 @@
         width: 96% !important
         padding-left: 4%
 
-      .password
+      .password,
+      .confirmation
         width: 90%
         padding: 1% 5%
-        margin: 2% 0 0 0
         float: none
         form
           margin: 0

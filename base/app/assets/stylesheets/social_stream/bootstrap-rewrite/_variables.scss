@@ -14,7 +14,8 @@ $grayDarker:            #222 !default;
 $grayDark:              #333 !default;
 $gray:                  #555 !default;
 $grayLight:             #888 !default;
-$grayLighter:           #ccc !default;
+$grayLighter:           #e2e2e2 !default;
+$whiteSmoke:            #f9f9f9 !default;
 $white:                 #fff !default;
 
 
@@ -30,6 +31,10 @@ $orange:                #f89406 !default;
 $pink:                  #c3325f !default;
 $purple:                #7a43b6 !default;
 
+// -----------
+$principalColor:        $blue !default;
+$secundaryColor:        $blueLight !default;
+$auxiliarColor:         $white !default;
 
 // Scaffolding
 // -------------------------
@@ -39,13 +44,14 @@ $textColor:             $grayDark !default;
 
 // Links
 // -------------------------
-$linkColor:             #0088cc !default;
+$linkColor:             #049cdb !default;
 $linkColorHover:        darken($linkColor, 15%) !default;
 
 
 // Typography
 // -------------------------
 $sansFontFamily:        "OpenSans", Arial, sans-serif;
+$sansFontFamilyLight:   "OpenSansLight", Arial, sans-serif;
 $serifFontFamily:       "BreeSerif", Times New Roman, Times, serif !default;
 $handwriteFontFamily:   "Giveyouglory", Courier New, monospace !default;
 
@@ -58,6 +64,13 @@ $headingsFontFamily:    inherit !default; // empty to use BS default, $baseFontF
 $headingsFontWeight:    normal !default;    // instead of browser default, bold
 $headingsColor:         inherit !default; // empty to use BS default, $textColor
 
+
+// buttons
+// -------------------------
+$principal-btnColorbackground: $auxiliarColor;
+$principal-btnColorborder: $principalColor;
+$secundary-btnColorbackground: $principalColor;
+$secundary-btnColorborder: $auxiliarColor;
 
 // Component sizing
 // -------------------------

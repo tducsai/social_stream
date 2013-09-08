@@ -9,6 +9,8 @@ module SocialStream
   mattr_accessor :subjects
   @@subjects = [ :user, :group, :site ]
 
+  mattr_writer :routed_subjects
+
   mattr_accessor :devise_modules
   @@devise_modules = [ :database_authenticatable, :registerable, :recoverable,
                        :rememberable, :trackable, :omniauthable, :token_authenticatable]
@@ -19,11 +21,78 @@ module SocialStream
   mattr_accessor :activity_forms
   @@activity_forms = []
 
-  mattr_accessor :relation_model
-  @@relation_model = :custom
-
   mattr_accessor :single_relations
   @@single_relations = [ :public, :follow, :reject ]
+
+  mattr_accessor :custom_relations
+  @@custom_relations = {
+    'user' => {
+      'friend' => {
+        'name' => 'friend',
+        'permissions' => [
+          [ 'follow' ],
+          [ 'create',  'activity' ],
+          [ 'read',    'activity' ]
+        ]
+      },
+      'acquaintance' => {
+        'name' => 'acquaintance',
+        'permissions' => [
+          [ 'read', 'activity' ]
+        ]
+      },
+      'colleague' => {
+        'name' => 'colleague',
+        'permissions' => [
+          [ 'follow' ],
+          [ 'create',  'activity' ],
+          [ 'read',    'activity' ]
+        ]
+      }
+    },
+    'group' => {
+      'member' => {
+        'name' => 'member',
+        'permissions' => [
+          [ 'represent' ],
+          [ 'create', 'activity' ],
+          [ 'read',   'activity' ],
+          [ 'read',   'tie' ]
+        ]
+      },
+      'partner' => {
+        'name' => 'partner',
+        'permissions' => [
+          [ 'read', 'activity' ]
+        ]
+      }
+    },
+    'site/current' => {}
+  }
+
+  mattr_accessor :system_relations
+  @@system_relations = {
+    user: [],
+    group: [ :owner ]
+  }
+
+  mattr_accessor :available_permissions
+  @@available_permissions = {
+    'user' => [
+      [ "read",    "activity" ],
+      [ "create",  "activity" ],
+      [ "follow", nil ],
+      [ "represent", nil ],
+      [ "notify", nil ]
+    ],
+    'group' => [
+      [ "read",    "activity" ],
+      [ "create",  "activity" ],
+      [ "follow", nil ],
+      [ "represent", nil ],
+      [ "notify", nil ]
+    ]
+  }
 
   mattr_accessor :suggested_models
   @@suggested_models = [ :user, :group ]
@@ -57,6 +126,19 @@ module SocialStream
   class << self
     def setup
       yield self
+    end
+
+    # All the subjects that appear in routes and can be accessed
+    # through the browser / API
+    def routed_subjects
+      @@routed_subjects ||= subjects.dup
+    end
+
+    # An array of the keys that must be tried when searching for a
+    # profile subject
+    def profile_subject_keys
+      @profile_subject_keys ||=
+        routed_subjects.map{ |s| s.to_s.split('/').last }
     end
 
     def objects

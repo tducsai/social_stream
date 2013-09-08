@@ -1,7 +1,7 @@
 class EventsController < ApplicationController
   include SocialStream::Controllers::Objects
 
-  before_filter :profile_subject!, :only => :index
+  before_filter :profile_or_current_subject!, :only => :index
 
   def index
     index! do |format|
@@ -21,7 +21,13 @@ class EventsController < ApplicationController
 
   def show
     show! do |format|
-      format.html { redirect_to polymorphic_path([ @event.post_activity.receiver_subject, Event.new ], :at => @event.start_at.to_i) }
+      format.html { 
+        if request.xhr?
+          render partial: 'show_modal'
+        else
+          redirect_to polymorphic_path([ @event.post_activity.receiver_subject, Event.new ], :at => @event.start_at.to_i)
+        end
+      }
     end
   end
 

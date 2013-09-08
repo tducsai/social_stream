@@ -1,3 +1,7 @@
+input#group_name
+  margin-left: 0px
+  width: 93% !important 
+
 #contacts
   @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
 
@@ -11,12 +15,14 @@
         .caret
           margin-left: 6px
 
-    input
-      &[type="text"]
-        margin-left: 0px
-        width: 20% !important
-        float: right
-        margin-botom: 0 !important
+    .contact-filter
+      margin-left: 0px
+      width: 22% !important 
+      float: left
+      margin-botom: 0 !important
+    .new_group-modal-link
+      float: right
+
     .tab-content
       .contact-list
         clear: both
@@ -24,46 +30,8 @@
         padding-bottom: 50px
 
         .contact
-          width: 240px
-          float: left
-          margin-left: 19px
-          min-height: 76px
-          margin-bottom: 14px
-
-        .avatar
-          float: left
-          margin-left: 0px
-          width: 50px
-          display: inline
-          margin-top: 10px
-          img
-            width: 45px 
-            vertical-align: top
-
-        .data
-          float: left
-          margin-left: 0px
-          width: 175px
-          display: inline-block
-          margin-top: 11px
-        .info
-          @include ellipsis
-          z-index: 1
-          padding-left: 2%
-      
-        .add
-          z-index: 1
-          float: left
-          .edit_contact
-            margin-bottom: 0px
-          .dropdown-toggle
-            margin-left: 0 
-            widht: 100%
-        .x
-          display: inline-block
-          float: right
-          margin-top: -40px
-          
+          @include contact-layout
+        
 
 #contact-form
   ul
@@ -90,29 +58,9 @@
 ///////////// 
 
 
-#relation_customs,
-  .relation_list
-    @include makeColumn(3, 0)
-    padding-right: 5px
-    input
-      margin-right: 10px
-    label
-      display: inline-block
 
-    .actions
-      display: inline-block
-      float: right
-      margin-right: 10px
-
-    .edit_name
-      margin-top: -22px
-      .edit_relation_custom
-        margin-bottom: 0px
-        .icon_tool16-ok
-          margin-top: -6px
-
-    .btn
-      margin-left: 32px
+.relation_customs
+  @include privacity
 
 #relation_custom_name
   width: 215px
@@ -125,11 +73,12 @@
   a 
     float: right
     margin-right: 10px
+    margin-bottom: 20px
   .new_relation_custom
     .btn
-      @include buttonBackground($blueDark, $blue, $textColor: #fff, $textShadow: 0 -1px 0 rgba(0,0,0,.25)) 
+      @include btn-secundary 
       float: right
-      margin: 7px 13px 0 0
+      margin: 7px 0px 0 0
     
 
 #new_relation_input_block
@@ -138,7 +87,7 @@
 
 
 #permissions
-  @include makeColumn(5, 0)
+  @include makeColumn(4, 0)
   h4
     text-align: left
   li

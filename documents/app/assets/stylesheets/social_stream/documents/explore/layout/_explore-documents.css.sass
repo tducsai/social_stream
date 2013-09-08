@@ -1,20 +1,10 @@
 #search-results,
 .repository-list-net,
-.repository-list
+.repository-list,
+.documents
   .picture,
   .audio,
   .video,
   .document
-    display: inline
-    @include makeColumn(3, 0)
-    margin-left: 19px
-    margin-bottom: 14px
-    .thumb
-      @include makeColumnoMargin(1, 0)
-      display: inline
-      margin-top: 14px
-    .brifing
-      @include makeColumnoMargin(2, 0)
-      display: inline-block
-    .author
-      margin-top: -10px
+    @include docs-layout
+    @include docs-style

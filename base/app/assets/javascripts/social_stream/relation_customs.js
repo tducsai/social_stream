@@ -1,9 +1,10 @@
 //= require social_stream/callback
+
 SocialStream.RelationCustom = (function(SS, $, undefined){
   var callback = new SS.Callback();
 
   var getListEl = function() {
-    return $('#relation_customs .relation_list');
+    return $('.relation_list');
   };
 
   var getPermissionsPath = function() {
@@ -50,7 +51,7 @@ SocialStream.RelationCustom = (function(SS, $, undefined){
   };
 
   var editFormsListener = function(event) {
-    if (event && $(event.srcElement).closest('.relation_custom').length > 0) {
+    if (event && $(event.target).closest('.relation_custom').length) {
       return;
     }
 
@@ -77,7 +78,6 @@ SocialStream.RelationCustom = (function(SS, $, undefined){
     $('#permissions').find('.relation_permissions').hide();
 
     if (radioInput.attr('data-loaded')) {
-      console.log('#relation_' + relVal + '_permissions');
       $('#relation_' + relVal + '_permissions').show();
 
       return;
@@ -119,8 +119,6 @@ SocialStream.RelationCustom = (function(SS, $, undefined){
     $('#new_relation').before(options.relation.html);
 
     initList($('#relation_custom_' + options.relation.id));
-
-    resetNewForm();
   };
 
   var resetNameForm = function(options) {
@@ -152,6 +150,10 @@ SocialStream.RelationCustom = (function(SS, $, undefined){
     el.find('input[name="relation_custom[name]"]').val('');
   };
 
+  var selectNewItem = function(options) {
+    $('input[name^="relation"][value="' + options.relation.id + '"]').click();
+  };
+
   var hideElement = function(options) {
     $('#relation_custom_' + options.relation.id).hide();
     $('#relation_' + options.relation.id + '_permissions').hide();
@@ -161,7 +163,10 @@ SocialStream.RelationCustom = (function(SS, $, undefined){
                     initList,
                     initPermission);
 
-  callback.register('create', addToList);
+  callback.register('create',
+                     addToList,
+                     resetNewForm,
+                     selectNewItem);
 
   callback.register('update',
                     resetNameForm,

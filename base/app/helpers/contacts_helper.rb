@@ -1,34 +1,54 @@
 module ContactsHelper
-  def contact_brief(subject)
-    t 'contact.in_common', :count => current_subject.common_contacts_count(subject)
+  def contact_count(actor)
+    if user_signed_in?
+      t 'contact.in_common', :count => current_subject.common_contacts_count(actor)
+    else
+      t 'contact.n', count: actor.sent_active_contact_count
+    end
   end
 
-  def contact_link(c)
+  # Add contact button
+  def contact_button(contact_or_actor)
+    if user_signed_in?
+      signed_in_contact_button contact_or_actor
+    else
+      anonymous_contact_button
+    end
+  end
+
+  def signed_in_contact_button contact_or_actor
+    c =
+      if contact_or_actor.is_a?(Contact)
+        contact_or_actor
+      else
+        current_actor.contact_to!(contact_or_actor)
+      end
+
     if c.reflexive?
       t('subject.this_is_you')
+    elsif can? :update, c
+      render partial: "contacts/button",
+             locals: { contact: c }
     else
-      render :partial => "contacts/link_#{ SocialStream.relation_model }", :locals => { :contact => c }
+      ""
     end
-
   end
 
-  # Show current ties from current user to actor, if they exist, or provide a link
-  # to create new ties to actor
-  def contact_to(a)
-    if user_signed_in?
-      contact_link current_subject.contact_to!(a)
-    else
-      if SocialStream.relation_model == :follow
-        form_tag new_user_session_path do |f|
-          submit_tag t('contact.follow')
-        end
-      else
-        link_to t("contact.new.link"), new_user_session_path
-      end
+  def anonymous_contact_button
+    form_tag new_user_session_path do |f|
+      submit_tag t('contact.new.button.zero')
     end
   end
 
   def current_contact_section? section
     params[:type] == section.to_s
+  end
+
+  def contact_select_options options
+    if !options.empty? && options.first.respond_to?(:last) && Array === options.first.last
+      grouped_options_for_select(options)
+    else
+      options_for_select(options)
+    end
   end
 end

@@ -5,18 +5,14 @@ module SocialStream
     module Models
       autoload :ActivityObject, 'social_stream/documents/models/activity_object'
     end
-  end
 
-  module Documents
     # Picture thumbnails
     mattr_accessor :picture_styles
     @@picture_styles = {
-      :thumb48sq  => ["48x48"],
       :"170x127#" => ["170x127#"],
       # this one preserves A4 proportion: 210x297
       :"80x113#" => ["80x113#"],
-      :"500" => ["500>"],
-      :"540x220" => ["540x220>"]
+      :"500" => ["500>"]
     }
 
     mattr_accessor :audio_styles
@@ -24,26 +20,29 @@ module SocialStream
       webma: {
         format: 'webm',
         processors: [ :ffmpeg ]
-      },
-      waveform: {
+      }
+    }
+
+    # Install the paperclip_waveform gem to create pngs with
+    # the audio wave form
+    if defined? PaperclipWaveform
+      @@audio_styles[:waveform] = {
         format: :png,
         convert_options: {
           color: :transparent,
-          background_color: 'ffffff',
+          background_color: '#333333',
           width: 460,
           height: 75
         },
         processors: [ :waveform ]
       }
-    }
+    end
 
     mattr_accessor :video_styles
     @@video_styles = {
       :webm => { :format => 'webm' },
       :flv  => { :format => 'flv' },
       :mp4  => { :format => 'mp4' },
-      :poster  => { :format => 'png', :time => 5 },
-      :thumb48sq  => { :geometry => "48x48" , :format => 'png', :time => 5 },
       :"170x127#" => { :geometry => "170x127#", :format => 'png', :time => 5 }
     }
 

@@ -1,29 +1,71 @@
+---
 es:
   account:
-    applications: "Aplicaciones"
+    applications: Aplicaciones
   activerecord:
     attributes:
       site/client:
-        callback_url: "Callback URL"
-        id: "Client ID"
-        name: "Nombre"
-        secret: "Client Secret"
-        url: "URL"
-  authorizations:
+        callback_url: Callback URL
+        id: Client ID
+        name: Nombre
+        secret: Client Secret
+        url: URL
+  authorization:
     form:
-      accept: "Aceptar"
-      cancel: "Cancelar"
+      accept: Accept
+      cancel: Cancel
     new:
-      title: "¿Autorizar %{client}?"
       permission:
-        title: "El sitio %{client} será capaz de:"
+        title: 'The site %{client} will be able to:'
+      title: Authorize %{client}?
+  helpers:
+    submit:
+      site_client:
+        create: Siguiente
+        update: Guardar
   permission:
-    public_info: "Acceder a tu información pública"
+    description:
+      default:
+        brief:
+          manage:
+            contact: Manage authorizations
+            nil: Gestionar el sitio
+            relation/custom: Gestionar los roles
+        detailed:
+          manage:
+            contact:
+              negative: NO PODRÁN asignar roles a usuarios
+              positive: PODRÁN asignar roles a usuarios
+            nil:
+              negative: NO PODRÁN actualizar los detalles del sitio
+              positive: PODRÁN actualizar los detalles del sitio
+            relation/custom:
+              negative: NO PODRÁN crear, actualizar y borrar los roles del sitio
+              positive: PODRÁN crear, actualizar y borrar los roles del sitio
+    public_info: Acceder a tu información pública
+  relation_admin:
+    name: Administrador de Sitio
+  relation_manager:
+    name: Admin
   site:
     client:
-      added: "Sitios añadidos"
+      added: Sitios añadidos
+      button:
+        edit: Editar
+      contact:
+        add: Add
+      destroy:
+        confirm: Are you sure? This operation cannot be reverted!
+        link: Remove the site client and all its data
+        title: Destroy site client
+      go_to_other: Ver tus otros sitios
       index:
-        title: "Sitios"
+        title: Sitios
       new:
-        link: "Añadir sitio"
-        title: "Registrar nuevo sitio"
+        link: Registrar sitio
+        title: Registrar nuevo sitio
+      oauth:
+        credentials: Credenciales OAuth2
+        secret:
+          refresh: regenerar
+          refreshed: Token secreto de OAuth2 regenerado

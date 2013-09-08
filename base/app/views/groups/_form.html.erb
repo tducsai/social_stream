@@ -1,0 +1,48 @@
+<%= form_for group, html: { class: 'ss_group_form' } do |f| %>
+  <% if group.errors.any? %>
+    <div class="error">
+      <h2><%= pluralize(group.errors.count, "error") %> prohibited this group from being saved:</h2>
+      <ul>
+        <% group.errors.full_messages.each do |msg| %>
+          <li>
+          <%= msg %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <section class="name">
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </section>
+  <section class="owners">
+    <%= f.label :owners %>
+    <%= f.hidden_field :owners, 'data-path' => actors_path(format: :json), "data-actor_name" => current_subject.name %>
+  </section>
+  <section class="tags">
+    <%= f.label :tags_list %>
+    <%= f.text_field :tag_list, 'data-path' => tags_path(format: :json) %>
+  </section>
+  <section class="description">
+    <%= f.label :description %>
+    <%= f.text_area :description %>
+  </section>
+
+  <%= f.submit :class => "btn" %>
+<% end %>
+
+<%= javascript_tag do %>
+  $(function() {
+    SocialStream.Group.new_(
+      {
+        form: '.ss_group_form',
+        validate: [
+          {
+            errorClass: "validation_error"
+          }
+        ]
+      }
+    );
+  });
+<% end %>

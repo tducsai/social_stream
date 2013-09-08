@@ -7,18 +7,6 @@ describe GroupsController do
   render_views
 
   describe "when Anonymous" do
-    it "should render index" do
-      get :index
-
-      assert_response :success
-    end
-
-    it "should render index with most followed" do
-      get :index, :most => 'followed'
-
-      response.should be_success
-    end
-
     it "should render show" do
       get :show, :id => Factory(:group).to_param
 
@@ -56,12 +44,6 @@ describe GroupsController do
       sign_in @user
     end
 
-    it "should render index" do
-      get :index
-
-      assert_response :success
-    end
-
     it "should render contact group" do
       @group = Factory(:member, :contact => Factory(:group_contact, :receiver => @user.actor)).sender_subject
       get :show, :id => @group.to_param
@@ -96,17 +78,17 @@ describe GroupsController do
         @user.senders.should include(group.actor)
       end
 
-      context "with participants" do
+      context "with owners" do
         before do
-          @user_participant = Factory(:user)
-          @group_participant = Factory(:group)
+          @user_owner = Factory(:user)
+          @group_owner = Factory(:group)
         end
 
         it "should allow creating" do
           count = Group.count
           post :create,
                :group => { :name => "Test group",
-                           :_participants => [ @user_participant.actor_id, @group_participant.actor_id ].join(',') }
+                           :owners => [ @user_owner.actor_id, @group_owner.actor_id ].join(',') }
 
           group = assigns(:group)
 
@@ -114,10 +96,10 @@ describe GroupsController do
           Group.count.should eq(count + 1)
           assigns(:current_subject).should eq(group)
 
-          participants = group.contact_subjects(:direction => :sent)
+          owners = group.contact_subjects(:direction => :sent)
 
-          participants.should include(@user_participant)
-          participants.should include(@group_participant)
+          owners.should include(@user_owner)
+          owners.should include(@group_owner)
 
           group.contact_subjects(:direction => :received)
           response.should redirect_to(:home)
@@ -133,7 +115,18 @@ describe GroupsController do
         model_attributes[:user_author_id] = user.actor_id
       end
 
-      it_should_behave_like "Deny Creating"
+      it "should create but own" do
+        count = model_count
+        post :create, attributes
+
+        resource = assigns(demodulized_model_sym)
+
+        model_count.should eq(count + 1)
+        resource.should be_valid
+        resource.author.should eq(@user.actor)
+        resource.user_author.should eq(@user.actor)
+        response.should redirect_to(:home)
+      end
     end
 
     context "a external group" do

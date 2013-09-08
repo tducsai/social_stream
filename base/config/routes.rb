@@ -7,30 +7,30 @@ Rails.application.routes.draw do
   match 'search' => 'search#index', :as => :search
 
   # Social Stream subjects configured in config/initializers/social_stream.rb
-  SocialStream.subjects.each do |actor|
-    resources actor.to_s.pluralize do
-      resources :contacts
-      resource :like
-      resource :profile
-      resources :activities
+  route_subjects do
+    resources :contacts
+    resource :like
+    resource :profile
+    resources :activities
 
-      # Nested Social Stream objects configured in config/initializers/social_stream.rb
-      #
-      # /users/demo/posts
-      (SocialStream.objects - [ :actor ]).each do |object|
-        resources object.to_s.pluralize do
-          get 'search', :on => :collection
-        end
+    # Nested Social Stream objects configured in config/initializers/social_stream.rb
+    #
+    # /users/demo/posts
+    (SocialStream.objects - [ :actor ]).each do |object|
+      resources object.to_s.pluralize do
+        get 'search', :on => :collection
       end
+    end
 
-      # Repository models are configured in config/initializers/social_stream.rb
-      if SocialStream.repository_models.present?
-        resource :repository do
-          get 'search', on: :collection
-        end
+    # Repository models are configured in config/initializers/social_stream.rb
+    if SocialStream.repository_models.present?
+      resource :repository do
+        get 'search', on: :collection
       end
     end
   end
+
+  resources :actors, only: [ :index ]
 
   # Get information about current_subject
   match 'user'    => 'users#current', format: :json
@@ -62,19 +62,11 @@ Rails.application.routes.draw do
     end
   end
 
-  constraints SocialStream::Routing::Constraints::Custom.new do
-    namespace "relation" do
-      resources :customs
-    end
-
-    resources :permissions
+  namespace "relation" do
+    resources :customs
   end
 
-  constraints SocialStream::Routing::Constraints::Follow.new do
-    match 'followings' => 'followers#index', :as => :followings, :defaults => { :direction => 'sent' }
-    match 'followers' => 'followers#index', :as => :followers, :defaults => { :direction => 'received' }
-    resources :followers
-  end
+  resources :permissions
 
   resources :activity_actions
 

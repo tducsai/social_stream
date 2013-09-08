@@ -17,9 +17,9 @@ module SocialStream
       extend ActiveSupport::Concern
 
       included do
-        inherit_resources
+        include SocialStream::Controllers::Authorship
 
-        before_filter :set_author_ids, :only => [ :new, :create, :update ]
+        inherit_resources
 
         before_filter :authenticate_user!, :only => [:new, :edit, :create, :update, :destroy]
 
@@ -49,23 +49,23 @@ module SocialStream
         
         protected
 
-        def whitelisted_params
-          return {} if request.present? and request.get?
-
-          params.require(self.class.model_class.to_s.underscore.to_sym).permit( *all_allowed_params )
+        def permitted_params
+          params.permit(self.class.model_class.to_s.underscore.to_sym => all_allowed_params)
         end
 
         private
 
+        # Memoize pattern to retrieve objects collection
         def collection
           collection_variable_get ||
             collection_variable_set(build_collection)
         end
 
+        # Uses the {ActivityObject#collection} method to retrieve the objects collection
         def build_collection
-          self.class.model_class. # @posts = Post
-            collection(profile_subject, current_subject).
-            page(params[:page])
+          self.class.model_class.                          # @posts = Post.
+            collection(profile_subject, current_subject).  #   collection(profile_subject, current_subject).
+            page(params[:page])                            #   page(params[:page])
         end
       end
 
@@ -73,12 +73,6 @@ module SocialStream
 
       def increment_visit_count
         resource.activity_object.increment!(:visit_count) if request.format == 'html'
-      end
-
-      def set_author_ids
-        resource_params.first[:author_id] = current_subject.try(:actor_id)
-        resource_params.first[:user_author_id] = current_user.try(:actor_id)
-        resource_params.first[:owner_id] ||= current_subject.try(:actor_id)
       end
 
       def collection_variable_get

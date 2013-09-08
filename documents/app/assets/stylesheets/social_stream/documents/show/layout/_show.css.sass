@@ -13,6 +13,33 @@
       .actions
         width: 11%
         margin: 10px auto -7px
+      .video
+        .video-container
+          width: 100%
+          .jp-type-single
+            .jp-player
+              width: 100%
+            .jp-interface
+              min-height: 60px
+              .jp.controls
+                .jp-play,
+                .jp-pause
+                  left: -2px !important
+                  top: 21px !important
+                .jp-stop
+                  left: 38px !important
+                  top: 28px !important
+                .jp-mute,
+                .jp-unmute
+                  left: 73px !important
+                  top: 35px !important
+              .jp-volume-bar
+                left: 95px !important
+                top: 40px !important
+              .jp-current-time
+                left: 137px !important
+                  top: 32px !important
+
 
     .tabbable
       margin-top: 10px
@@ -50,7 +77,7 @@
 
   .details
     @extend .hidden-phone
-    width: 21.8%
+    width: 20%
     float: left 
     margin-left: 30px
     h4
@@ -74,6 +101,12 @@
   .autor,
   .dates
     margin-left: 10px
+  .tags
+    span
+      padding: 3px 3px 4px 3px
+      display: inline-block
+      &:first:child
+        display: inline
 
 
 #picture_description
@@ -81,6 +114,9 @@
  
 #document-edit
   margin-left: 8px
+  .tags
+    .select2-container
+      width: 97%
   .fcbk
     margin-bottom: 20px
   input

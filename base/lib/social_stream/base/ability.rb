@@ -59,6 +59,13 @@ module SocialStream
             a.audience.include?(subject.actor) 
         end
 
+        can :read, Contact
+
+        can :manage, Contact do |c|
+          c.sender == subject.actor ||
+            c.sender.allow?(subject, 'manage', 'contact')
+        end
+
         # Users
         can :read, User
 
@@ -74,11 +81,7 @@ module SocialStream
             g.author_id == Actor.normalize_id(subject)
         end
 
-        can :update, Group do |g|
-          g.represented_by?(subject)
-        end
-
-        can :destroy, Group do |g|
+        can [ :update, :destroy, :represent ], Group do |g|
           g.represented_by?(subject)
         end
 
@@ -90,7 +93,14 @@ module SocialStream
         end
 
         # Privacy
-        can [:create, :read, :update, :destroy], Relation::Custom, :actor_id => subject.try(:actor_id)
+        can :read, Relation::Owner
+
+        can :manage, ::Relation::Custom do |r|
+          subject.present? && (
+            r.actor_id == subject.actor_id ||
+            r.actor.allow?(subject, 'manage', 'relation/custom')
+          )
+        end
       end
     end
   end

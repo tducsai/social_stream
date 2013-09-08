@@ -11,8 +11,18 @@ SocialStream.Wall = (function(SS, $, undefined){
     $('.wall_input [name="post[text]"]').autosize();
   };
 
+  // Prevent sending the same post several times
+  var initShareButton = function() {
+    $('.wall_input input[type="submit"]').on('click', loadingShareButton);
+  };
+
+  var loadingShareButton = function() {
+    $(this).button('loading');
+  };
+
   var resetWallInput = function(){
     $('#post_text').val('');
+    $('.wall_input input[type="submit"]').button('reset');
   };
 
   var changeAction = function(path) {
@@ -30,8 +40,14 @@ SocialStream.Wall = (function(SS, $, undefined){
     }
   };
 
+  var changeParams = function(type) {
+    SS.Object.changeOwner(type, $('.wall_input form'));
+    SS.Object.changeRelationSelect(type, $('.wall_input form'));
+  };
+
   callback.register('show',
                     initInputAutosize,
+                    initShareButton,
                     SS.Object.new_);
 
   callback.register('new_',
@@ -39,6 +55,6 @@ SocialStream.Wall = (function(SS, $, undefined){
 
   return callback.extend({
     changeAction: changeAction,
-    changeRelationSelect: SS.Object.changeRelationSelect 
+    changeParams: changeParams 
   });
 }) (SocialStream, jQuery);

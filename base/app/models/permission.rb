@@ -43,9 +43,60 @@ class Permission < ActiveRecord::Base
     scope p, where(:action => p) # scope :represent, where(:action => 'represent')
   end
 
+  class << self
+    # Obtains the available permissions for subject, as they are configured
+    # in config.available_permissions entry in config/initializers/social_stream.rb
+    #
+    # It takes STI into account, so it will try to load the permissions of the base_class
+    # if the class is not found
+    def available(subject)
+      class_name = subject.class.to_s.underscore
+      # TODO add further classes
+      base_class_name = subject.class.base_class.to_s.underscore
+
+      candidates = [ class_name ]
+
+      if class_name != base_class_name
+        candidates += [ base_class_name ]
+      end
+
+      list = nil
+
+      candidates.each do |n|
+        list = SocialStream.available_permissions.with_indifferent_access[n]
+
+        break if list.present?
+      end
+
+      if list.blank?
+        raise "You need to configure SocialStream.available_permissions[:#{ class_name }] in config/initializers/social_stream.rb"
+      end
+
+      instances list
+    end
+
+    # Finds or creates in the database the instances of the permissions described in
+    # {ary} by arrays of [ action, object ]
+    def instances ary
+      ary.map{ |p| find_or_create_by_action_and_object *p }
+    end
+  end
+
+  # The permission title
+  def title(options = {})
+    i18n_description :brief, options
+  end
+
+  # The permission description
+  def description(options = {})
+    i18n_description :detailed, options
+  end
+
+  private
+
   # An explanation of the permissions. Type can be brief or detailed.
   # If detailed, description includes more information about the relation
-  def description(type, options = {})
+  def i18n_description(type, options = {})
     unless options[:subject].present?
       raise "Now we need subject for permission description"
     end

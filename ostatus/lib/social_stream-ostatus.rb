@@ -40,15 +40,14 @@ module SocialStream
       module Object
         autoload :ClassMethods, 'social_stream/ostatus/models/object'
       end
-
-      module Relation
-        autoload :Custom, 'social_stream/ostatus/models/relation/custom'
-      end
     end
     
     module Controllers
       autoload :DebugRequests, 'social_stream/ostatus/controllers/debug_requests'
     end
+
+    # Include route_subject in routes
+    SocialStream.routed_subjects << :remote_subject
   end
 end
 

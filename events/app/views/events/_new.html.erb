@@ -1,4 +1,4 @@
-<%= form_for @event || Event.new(:owner_id => profile_subject.actor_id, :interval => 1), :remote => true do |f| %>
+<%= form_for @event || Event.new(:owner_id => profile_or_current_subject.actor_id, :interval => 1), :remote => true do |f| %>
   <%= f.hidden_field :owner_id  %>
   <%= f.hidden_field :start_at %>
   <%= f.hidden_field :end_at %>
@@ -15,16 +15,19 @@
       </ul>
     </div>
   <% end %>
-
+<section>
   <%= f.label :title %>
   <%= f.text_field :title %>
-
+</section>
+<section>
   <%= f.label :description %>
   <%= f.text_area :description %>
-
+</section>
   <% if f.object.owner.rooms.any? %>
+    <section>
     <%= f.label :room %>
     <%= f.select :room_id, f.object.owner.rooms.map{ |r| [r.name, r.id] }, { include_blank: true } %>
+    </section>
   <% end %>
 
   <%= render :partial => 'scheduler/form',
@@ -33,5 +36,5 @@
   <%= render partial: 'objects/form_privacy',
              locals: { f: f } %>
   
-  <%= f.submit nil, { class: "btn-blue" } %>
+  <%= f.submit nil %>
 <% end %>

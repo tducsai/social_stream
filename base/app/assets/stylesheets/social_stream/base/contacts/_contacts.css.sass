@@ -1,15 +1,21 @@
 #contacts
   .contacts
+    .new_group-modal-link
+      @include btn-primary
+      @include border-radius(5px)
     .add
       @include btn-add
 
 
-      .tab-content
-        .contact-list
-          .contact
-            .x
-              font-size: 12px
-              color: $black
+    .tab-content
+      .add-goup
+        float: right
+      .contact-list
+        .contact
+          @include contact-style
+          .x
+            font-size: 12px
+            color: $black
 
 
 #contact-form
@@ -23,16 +29,10 @@
 ///////////// 
 
 
-#relation_customs,
-  .relation_list
-    border-right: 1px solid #c4c4c4
-
-
-#new_relation
-  .new_relation_custom
-    .btn
-      @include buttonBackground($blueDark, $blue, $textColor: #fff, $textShadow: 0 -1px 0 rgba(0,0,0,.25)) 
-    
+#relation_customs
+  h2
+    @include colorfont-big-size
+  
 
 #permissions
   h4

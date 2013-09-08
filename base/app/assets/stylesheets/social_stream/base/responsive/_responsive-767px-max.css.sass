@@ -29,12 +29,14 @@
     .activities
       @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
       margin-left: 0
+      margin-top: 20px
 
 
 
 
   #user,
-  #group
+  #group,
+  #contacts
     #toolbar
       @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
       .user
@@ -69,30 +71,10 @@
 
 
 
-  #profile
-    @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
-    margin-left: 0px
-
-    #profile-info
-      @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
-      float: none
-      margin: 0px auto 0px
-      .tags,
-      .personal,
-      .comunication-info,
-      .experience,
-      .avatar
-        @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
-        .update
-          @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
-
-
-
   #relation_customs
     #toolbar
     h2
       background-color: #c4c4c4
-      color: $white
       font-weight: bold
       padding-left: 10px
       border-top-left-radius: 10px
@@ -136,7 +118,8 @@
 // ---------------------
 
 @media (max-width: 480px)
-
+  body
+    text-rendering: optimizeSpeed
   header.navbar
     ul 
       li
@@ -165,7 +148,7 @@
               width: 89%
           .wall_input-actions
             .btn-group
-              margin-top: 10px
+              margin-top: 0px
       .timeline
         .avatar
           float: left

@@ -20,10 +20,17 @@
         <div id="<%= type %>" class="tab-pane <%= 'active' if current_contact_section?(type) %>">
           <%= text_field_tag "contact-filter-#{ type }", (current_contact_section?(type) ? params[:q] : ""), class: "pull-right contact-filter", placeholder: "filter", autocomplete: "off" %>
 
+          <% if user_signed_in? && type == :group %>
+            <%= link_to t('group.new.link'), new_group_path, class: 'new_group-modal-link', 'data-toggle' => 'modal' %>
+
+            <%= render partial: 'groups/new_modal',
+                       locals: { resource_class: Group } %>
+          <% end %>
+
           <div class="contact-list">
             <% if current_contact_section?(type) %>
               <% if @contacts.any? %>
-                <%= render @contacts %>
+                <%= render current_subject_contacts_to(@contacts) %>
               <% else %>
                 <%= raw t("contact.empty", explore: explore_path) %>
               <% end %>

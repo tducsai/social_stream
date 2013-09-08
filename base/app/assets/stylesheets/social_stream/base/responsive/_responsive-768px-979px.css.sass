@@ -9,7 +9,10 @@
     ul
       margin-top: 13px
 
-
+  header 
+    .navbar-inner 
+      .search-nav
+        margin: 0px 0 0 43px
 
   footer
     @extend .hidden-tablet
@@ -52,38 +55,13 @@
           width: 127px
           margin-left: 3px
 
-  #profile
-    @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
-
-    #profile-info
-      @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
-      float: none
-      margin: 0px auto 0px
-      .tags,
-      .personal,
-      .comunication-info,
-      .experience,
-      .avatar
-        @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
-        .update
-          @include grid-core-span(12, $fluidGridColumnWidth, $fluidGridGutterWidth)
+  
           
 
 
   .relation_customs
-    @include grid-core-span(10, $fluidGridColumnWidth, $fluidGridGutterWidth)
-    float: left
-    margin-top: 20px
-    .relation_list
-      @include grid-core-span(4, $fluidGridColumnWidth, $fluidGridGutterWidth)
     #permissions
       @include grid-core-span(5, $fluidGridColumnWidth, $fluidGridGutterWidth)
-
-
-
-  #site_clients
-    #toolbar
-      background-color: black
 
 
 

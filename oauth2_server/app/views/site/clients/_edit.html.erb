@@ -1,0 +1,13 @@
+<section class="edit_form">
+  <%= render partial: 'form' %>
+</section>
+
+<section class="site_client_roles">
+  <%= render partial: 'relation/customs/index',
+             locals: { subject: resource } %>
+</section>
+
+<section class="delete">
+  <%= render partial: 'destroy' %>
+</section>
+

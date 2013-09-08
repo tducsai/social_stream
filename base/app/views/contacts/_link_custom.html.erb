@@ -1,3 +1,0 @@
-<%= form_for contact, remote: true, html: { 'data-contact_id' => contact.id } do |f| %>
-  <%= f.select :relation_ids, contact.options_for_select, {}, { multiple: true } %>
-<% end %>

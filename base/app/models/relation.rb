@@ -41,10 +41,8 @@
 # It sets the {Audience} that has access to it, and the {Permission Permissions} that rule that access.
 #
 class Relation < ActiveRecord::Base
-  Positive = %w{ custom public follow }
+  Positive = %w{ custom public follow owner }
   Negative = %w{ reject }
-
-  belongs_to :actor
 
   has_many :relation_permissions, :dependent => :destroy
   has_many :permissions, :through => :relation_permissions
@@ -56,10 +54,6 @@ class Relation < ActiveRecord::Base
   has_many :activities, :through => :audiences
 
   has_many :activity_object_audiences, :dependent => :destroy
-
-  scope :actor, lambda { |a|
-    where(:actor_id => Actor.normalize_id(a))
-  }
 
   scope :mode, lambda { |st, rt|
     where(:sender_type => st, :receiver_type => rt)
@@ -73,8 +67,6 @@ class Relation < ActiveRecord::Base
     joins(:permissions).
       merge(Permission.where(:action => action).where(:object => object))
   }
-
-  before_create :initialize_sender_type
 
   class << self
     # Get relation from object, if possible
@@ -160,7 +152,7 @@ class Relation < ActiveRecord::Base
     def ids_shared_with(subject)
       ids = [Relation::Public.instance.id]
 
-      if SocialStream.relation_model == :custom && subject.present?
+      if subject.present?
         # Subject own defined custom relations
         ids += subject.relation_ids
         # From Ties sent by other subject
@@ -173,11 +165,30 @@ class Relation < ActiveRecord::Base
     def create_activity?
       true
     end
+
+    # Default extra relations that are displayed in {Actor}'s relation list,
+    # typically in /relation/customs
+    def system_list subject
+      name = subject.class.to_s.underscore
+      list = SocialStream.system_relations[name] ||
+        SocialStream.system_relations[name.to_sym]
+      
+      return [] if list.blank?
+
+      list.map{ |r| "Relation::#{ r.to_s.classify }".constantize.instance }
+    end
   end
 
   # Relation class scoped in the same mode that this relation
   def mode
     Relation.mode(sender_type, receiver_type)
+  end
+
+  # Compare two relations
+  def <=> rel
+    return -1 if rel.is_a?(Public)
+
+    permissions.count <=> rel.permissions.count
   end
 
   # Is this {Relation} a Positive one?
@@ -190,12 +201,10 @@ class Relation < ActiveRecord::Base
     permissions.follow.any?
   end
 
-  private
-
-  # Before create callback
-  def initialize_sender_type
-    return if actor.blank?
-
-    self.sender_type = actor.subject_type
+  # The permissions that can be assigned to this relation.
+  #
+  # They are principally used in the privacy form in /relation/customs form
+  def available_permissions
+    []
   end
 end

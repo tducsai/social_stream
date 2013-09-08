@@ -5,13 +5,7 @@
 
     <% if current_subject.present? && subject != current_subject %>
     <div class="contact-button">
-      <%= contact_to subject %>
-
-      <%= javascript_tag do %>
-        $(function() {
-          SocialStream.Contact.show();
-        });
-      <% end %>
+      <%= contact_button subject %>
     </div>
     <% end %>
 
@@ -32,11 +26,14 @@
         <% end %>
       </li>
     <% end %>
-    <li>
-      <%= link_to new_message_path do %>
-        <i class='icon_navbar-message'></i> <%= t 'mailboxer.send' %>
-      <% end %>
-    </li>
+
+    <% if subject != current_subject %>
+      <li>
+        <%= link_to new_message_path(receiver: subject.slug) do %>
+          <i class='icon_navbar-message'></i> <%= t 'mailboxer.send' %>
+        <% end %>
+      </li>
+    <% end %>
 
     <div class="base_items"/>
     </ul>

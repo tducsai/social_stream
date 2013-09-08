@@ -1,15 +1,32 @@
 class Site::Client < Site
   validates_presence_of :url, :callback_url, :secret
 
+  has_many :oauth2_tokens,
+           foreign_key: 'site_id',
+           dependent: :destroy
+
+  has_many :authorization_codes,
+           foreign_key: 'site_id',
+           class_name: 'Oauth2Token::AuthorizationCode'
+
+  has_many :access_tokens,
+           foreign_key: 'site_id',
+           class_name: 'Oauth2Token::AccessToken'
+
+  has_many :refresh_tokens,
+           foreign_key: 'site_id',
+           class_name: 'Oauth2Token::RefreshToken'
+
   before_validation :set_secret,
                     on: :create
 
-  after_create :set_admin
+  after_create :set_manager
 
-  scope :administered_by, lambda { |actor|
-    joins(actor: :sent_ties).
+  scope :managed_by, lambda { |actor|
+    select("DISTINCT sites.*").
+      joins(actor: :sent_permissions).
       merge(Contact.received_by(actor)).
-      merge(Tie.related_by(Relation::Admin.instance))
+      merge(Permission.where(action: 'manage', object: nil))
   }
 
   %w{ url callback_url secret }.each do |m|
@@ -22,8 +39,10 @@ class Site::Client < Site
     end
   end
 
-  def to_param
-    id
+  # Generate a new OAuth secret for this site client
+  def refresh_secret!
+    set_secret
+    save!
   end
 
   private
@@ -32,7 +51,10 @@ class Site::Client < Site
     self.secret = SecureRandom.hex(64)
   end
 
-  def set_admin
-    contact_to!(author).relation_ids = [ Relation::Admin.instance.id ]
+  def set_manager
+    c = sent_contacts.create! receiver_id: author.id,
+                              user_author: author
+
+    c.relation_ids = [ ::Relation::Manager.instance.id ]
   end
 end

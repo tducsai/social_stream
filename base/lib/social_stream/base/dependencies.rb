@@ -8,6 +8,8 @@ require 'rails_engine_decorators'
 require 'foreigner'
 # jQuery
 require 'jquery-rails'
+# jQuery UI
+require 'jquery-ui-rails'
 # Select2 javascript library
 require 'select2-rails'
 # Permalinks:
@@ -55,8 +57,6 @@ require 'bootstrap-sass'
 require 'deface'
 # Autolink text blocks
 require 'rails_autolink'
-# SocialCheesecake
-require 'social_cheesecake'
 # I18n-js
 require 'i18n-js'
 require 'i18n-js/social_stream-base'

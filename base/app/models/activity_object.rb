@@ -67,24 +67,23 @@ class ActivityObject < ActiveRecord::Base
   }
 
   scope :collection, lambda { |profile_subject = nil, current_subject = nil|
+    col = self
+
+    # /users/demo/posts
+    #
+    # get posts posted to demo's wall
     if profile_subject.present?
-      # /users/demo/posts
-      #
-      # get posts posted to demo's wall
-      col = owned_by(profile_subject)
+      col = col.owned_by(profile_subject)
+    end
 
-      # if current_subject != demo, auth filter results
-      if profile_subject != current_subject
-        col = col.shared_with(current_subject)
-      end
-    else
-      # auth filter results
-      col = shared_with(current_subject)
+    # Auth filter results
+    if current_subject != profile_subject || current_subject.blank?
+      col = col.shared_with(current_subject)
+    end
 
-      # if logged in, show the posts from the people following
-      if current_subject.present?
-        col = col.followed_by(current_subject)
-      end
+    # Show the posts from the people following
+    if profile_subject.blank? && current_subject.present?
+      col = col.followed_by(current_subject)
     end
 
     col
@@ -95,8 +94,10 @@ class ActivityObject < ActiveRecord::Base
   scope :followed, order("activity_objects.follower_count DESC")
 
   scope :followed_by, lambda { |subject|
-    joins(:received_actions).
-      merge(ActivityAction.sent_by(subject).where(:follow => true))
+    if subject.present?
+      joins(:received_actions).
+        merge(ActivityAction.sent_by(subject).where(:follow => true))
+    end
   }
 
   scope :not_actor, where('activity_objects.object_type != ?', "Actor")
@@ -108,6 +109,22 @@ class ActivityObject < ActiveRecord::Base
   scope :shared_with, lambda { |subject|
     joins(:activity_object_audiences).
       merge(ActivityObjectAudience.where(:relation_id => Relation.ids_shared_with(subject)))
+  }
+
+  scope :public, -> {
+    shared_with(nil)
+  }
+
+  scope :trending, -> {
+    not_actor.popular.public
+  }
+
+  scope :most_viewed, -> {
+    not_actor.visited.public
+  }
+
+  scope :last_uploaded, -> {
+    not_actor.created.public
   }
 
   # Obtain the {ActivityAction} between this {ActivityObject}

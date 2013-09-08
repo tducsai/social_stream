@@ -1,39 +1,39 @@
-#site_clients
-  .site_clients
-    header
-      font-size: 21px
+.site_clients
+  header
+    h1
+      @include colorfont-big-size
+      float: left
+    a
+      @include btn-secundary
+      @include border-radius(5px)
+      margin: 12px 0
+    .soften
+      @include opacity (100)
+
+  .name,
+  .url,
+  .users
+    color: $gray
+
+  .name
+    font-size: 16px
+
+  .url
+    a
       color: $gray
-      a
-        font-size: 14px
-      .btn
-        @extend .btn-blue
-      .soften
-        @include opacity (100)
-
-    .name,
-    .url,
-    .users
-      color: $gray
-
-    .name
-      font-size: 16px
-
-    .url
-      a
-        color: $gray
-        &:hover
-          color: $blue
-
-    .users
-      font-size: 16px
-      span
+      &:hover
         color: $blue
 
-  #new_site_client-modal
-    .modal-body
-      input
-        &[type="file"]
-          line-height: 0px
+  .users
+    font-size: 16px
+    span
+      color: $blue
+
+#new_site_client-modal
+  .modal-body
+    input
+      &[type="file"]
+        line-height: 0px
 
 .field_with_errors
   input
@@ -42,4 +42,20 @@
 
 #new_application
   .btn
-    @extend .btn-blue
+    @include btn-primary
+
+
+#site_client
+  margin-top: 48px
+  header
+    z-index: 100
+    margin-bottom: 0
+    h1
+      z-index: 50
+      position: absolute
+      margin-top: -47px
+    img
+      z-index: 100
+      margin: -47px 4px 0px 0px
+
+    

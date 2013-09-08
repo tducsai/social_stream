@@ -8,25 +8,28 @@
     .media
       .avatar
         @include border-radius (5px)
-
+      .media-heading
+        font-size: 12px
+        color: #919191
       .media-body
         color: $grayLight
         word-wrap: break-word
-        .media-heading
-          font-size: 14px
+        a
+          text-decoration: none
+        .x
+          font-size: 12px
+          color: $black
           a
             text-decoration: none
-          .x
-            font-size: 12px
-            color: $black
-            a
-              text-decoration: none
-              color: $grayLight
-              &:hover
-                color: $red
+            color: $grayLight
+            &:hover
+              color: $red
         .objects
           word-wrap: break-word
           .thumb
+            img
+              float: left
+              z-index: 1
 
           .text
             font-size: 12px
@@ -79,8 +82,7 @@
         font-size: 12px
 
     nav
-      a
-        @include btn-see-more
+      @include see-more
 
   #new_comment
     .btn
@@ -146,14 +148,7 @@
     #modal-carousel
       img
         @include border-radius(3px)
-        margin-left: auto
-        margin-right: auto
       .carousel-control
-        padding-top: 7%
-        padding-bottom: 9%
-        top: 43%
-        left: 1
-        height: auto
         line-height: 0
-
+      
 

@@ -1,0 +1,13 @@
+<section id="edit_site_client"> 
+
+  <%= render partial: 'toolbar/home' %>
+
+  <section class="edit_site_client" id="edit_<%= dom_id resource %>">
+    <% if params[:step].present? %>
+      <%= render partial: "edit_step_#{ params[:step] }" %>
+    <% else %>
+      <%= render partial: 'edit' %>
+    <% end %>
+  </section>
+</section>
+

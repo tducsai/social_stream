@@ -1,39 +1,55 @@
 class Site::ClientsController < ApplicationController
+  include SocialStream::Controllers::Subjects
+  include SocialStream::Controllers::Authorship
+
   before_filter :authenticate_user!
 
-  before_filter :set_author_ids, only: [ :create, :update ]
-
-  def index
-    @developer_clients = current_subject.developer_site_clients
-  end
-
-  def show
-    @client = Site::Client.find params[:id]
-  end
-
-  def new
-    @client = Site::Client.new
-  end
+  load_and_authorize_resource except: :index
 
   def create
-    @client = Site::Client.new params[:site_client]
-
-    if @client.save
-      respond_to do |format|
-        format.html { redirect_to @client }
-      end
-    else
-      respond_to do |format|
-        format.html { render :new }
-      end
+    create! do |success, error|
+      success.html { 
+        redirect_to polymorphic_path(resource, action: :edit, step: 2)
+      }
+      error.html { render :new }
     end
   end
 
-  private
+  # Refresh the site client token
+  def update_secret
+    resource.refresh_secret!
 
-  def set_author_ids
-    params[:site_client][:author_id]      = current_subject.actor_id
-    params[:site_client][:user_author_id] = current_user.actor_id
-    params[:site_client][:owner_id]       = current_subject.actor_id
+    respond_to do |format|
+      format.json { render json: { secret: resource.secret } }
+    end
+  end
+
+  def destroy
+    destroy! { :home }
+  end
+
+  def collection
+    get_collection_ivar ||
+      set_collection_ivar(build_collection)
+  end
+    
+  protected
+
+  def build_collection
+    current_subject.managed_site_clients
+  end
+
+  def permitted_params
+    params.permit resource_request_name => resource_permitted_params,
+                  resource_instance_name => resource_permitted_params
+  end
+
+  def resource_permitted_params
+    [
+      :name,
+      :description,
+      :url,
+      :callback_url
+    ]
   end
 end

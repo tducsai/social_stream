@@ -1,8 +1,7 @@
 <div id="profile-info">
-  <h2>
+  <h2 class="colorfont">
     <%= t('profile.one') %>
   </h2>
-
   <% if can?(:update, @profile) || @profile.tags_present? %>
     <%= render partial: "tags" %>
   <% end %>

@@ -4,13 +4,23 @@
 
 
 @media (max-width: 767px)
-  #user
+  #user,
+  #home,
+  #groups
     .activities
       .wall_input
         #new_post
           .document_description
             width: 96%
-
+      .timeline
+        .objects
+          .thumb
+            float: none
+          .text
+            h6
+              clear: both
+              font-size: 13px
+              @include ellipsis
   .picture,
   .audio,
   .video,
@@ -21,6 +31,7 @@
     .central
       width: 100% !important
       margin-left: 0px !important
+      margin-top: 20px
       .comments
         .avatar
           float: left
@@ -53,6 +64,20 @@
 // ---------------------
 
 @media (max-width: 480px)
+
+  #user,
+  #home,
+  #groups
+    .activities
+      .timeline
+        .comments
+          .child
+            .avatar
+              margin-right: 5px
+              .media-object
+                a
+                  img
+                    width: 40px
 
 
   

@@ -1,0 +1,17 @@
+//
+// Responsive: Large desktop and up
+// --------------------------------------------------
+
+
+@media (min-width: 1200px)
+
+  #sidebar
+    #suggestions,
+    #pendings
+      @include makeColumn(3,0)
+      margin-left: 0
+      .data
+        .info
+          font-size: 14px
+          line-height: 26px
+          color: $gray

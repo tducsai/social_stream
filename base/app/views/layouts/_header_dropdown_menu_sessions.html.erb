@@ -6,7 +6,7 @@
     <ul class="dropdown-menu dropdown-menu-header">
       <% representations.each do |representation| %>
       <li>
-        <%= link_to :s => representation.slug do %>
+      <%= link_to({ :s => representation.slug }, 'data-toggle' => 'tooltip', 'data-placement' => 'left', :title => representation.name, 'data-original-title' => representation.name) do %>
           <%= image_tag representation.logo.url(:small) %>
           <%= truncate_name(representation.name, :length => 15) %>
         <% end %>

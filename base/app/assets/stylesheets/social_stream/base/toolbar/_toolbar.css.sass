@@ -1,16 +1,18 @@
 .toolbar-profile
   .toolbar_menu
     ul
-      background: $white
+      background: #f9f9f9
       li
         @include btn-primary
         @include border-radius(5px)
+        a
+          @include ellipsis
         .icon_tool16-info
           background-position: -192px -110px
         .icon_navbar-resources
-          background-position: -175px -8px
+          background-position: -175px -12px
         .icon_navbar-message
-          background-position: -55px -8px
+          background-position: -55px -11px
         &:hover
           .icon_tool16-info
             background-position: -192px -235px
@@ -34,7 +36,7 @@
           color: $grayLighter
           background: transparent
           &:hover
-            color: $blue
+            color: $principalColor
             background: transparent
             .icon_message-new
               background-position: -9px -10px
@@ -53,11 +55,19 @@
           .icon_message-trash.active
             background-position: -188px -10px
         a.active
-          color: $blue
+          color: $principalColor
 
 
 
-#toolbar 
+#toolbar
+  h5
+    font-size: 16px
+    @include ellipsis
+    a
+      color: #666
+      &:hover
+        text-decoration: none
+        color: #444
   .contact-button
     @include btn-add
 
@@ -65,12 +75,12 @@
 
   .contacts-toolbar,
   section.groups
-    @extend .hidden-phone
     h4
-      margin-bottom: 0px
-      border-bottom: 1px solid #ddd
+      font-family: $sansFontFamilyLight
     ul
       border-right: 1px solid #ddd
+      img
+        @include border-radius(5px)
     .contacts-more,
     .groups-more
       text-align: right
@@ -85,11 +95,16 @@
     @include ellipsis
     img
       @include border-radius(5px)
-    h5 
+    .subject-name
+      @include ellipsis
+    .subject-name-phone
+      font-size: 16px
+      @include ellipsis
       a
-        text-decoration: none
-        color: $black
-        text-aling: center
+        color: #666
+        &:hover
+          text-decoration: none
+          color: #444
 
     .logo_caption
       font-size: 15px

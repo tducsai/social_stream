@@ -39,16 +39,16 @@
     @include border-radius(5px) 
 .conversations
   .conversation
-    @include opacity (100)
+    @include opacity (50)
 
 .unread
-  @include opacity (50)
+  @include opacity (100)
 
 .conversation_full
   h3
     @include ellipsis
   .participants
-    @extend .border-radius-5
+    @include border-radius(5px)
     background-color: #f1f1f1
     img
       @include border-radius (5px)
@@ -73,13 +73,13 @@
   .message
     border-bottom: 1px solid #f1f1f1
     background-color: $white
-    @extend .border-bottom-left-radius-15
     .media
       .pull-left
         img
           @include border-radius (5px)
       .date
-        color: $grayLighter
+        color: #999
+        font-size: 13px
 
 #new_message
   .toolbar_menu
@@ -88,9 +88,16 @@
         .active
           background-position: -9px -10px
   #conversation
-    input
-      &[type="submit"]
-        float: left
+    h2
+      @include colorfont-big-size
+    form.new_message
+      margin-top: 30px
+      input
+        &[type="submit"]
+          float: right
+          margin-top: 10px
+  #subject
+    width: 96.8% !important
 
 
 #content

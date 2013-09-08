@@ -1,45 +1,9 @@
 // require jquery.ba-url
+//
+//= require social_stream/callback
 
 SocialStream.Contact = (function($, SS, undefined) {
-  var indexCallbacks = [];
-
-  var addIndexCallback = function(callback){
-    indexCallbacks.push(callback);
-  };
-
-  var index = function(){
-    $.each(indexCallbacks, function(i, callback){ callback(); });
-  };
-
-  var showCallbacks = [];
-
-  var addShowCallback = function(callback){
-    showCallbacks.push(callback);
-  };
-
-  var show = function(){
-    $.each(showCallbacks, function(i, callback){ callback(); });
-  };
-
-  var updateCallbacks = [];
-
-  var addUpdateCallback = function(callback){
-    updateCallbacks.push(callback);
-  };
-
-  var update = function(options){
-    $.each(updateCallbacks, function(i, callback){ callback(options); });
-  };
-
-  var destroyCallbacks = [];
-
-  var addDestroyCallback = function(callback){
-    destroyCallbacks.push(callback);
-  };
-
-  var destroy = function(options){
-    $.each(destroyCallbacks, function(i, callback){ callback(options); });
-  };
+  var callback = new SS.Callback();
 
   var getForms = function(id) {
     return $('[data-contact_id="' + id + '"]');
@@ -66,12 +30,12 @@ SocialStream.Contact = (function($, SS, undefined) {
       success: function(data) {
         $(tab.attr('href')).find('.contact-list').html(data);
         tab.attr('data-loaded', 'true');
-        index();
+        callback.handlers.index();
       }
     });
   };
 
-  var initContactButtons = function() {
+  var initMultipleButtons = function() {
     $('.edit_contact select[name*="relation_ids"]').multiselect({
       buttonClass: 'btn btn-small',
       buttonText: relationSelectText
@@ -152,16 +116,14 @@ SocialStream.Contact = (function($, SS, undefined) {
     }
   };
 
-  // Dictate if some form has changed its status
   var getInputValues = function(form) {
     return $('ul.dropdown-menu input[type="checkbox"]', form).
       map(function() {
       if ($(this).is(':checked'))
         return $(this).val();
-    });
+      });
   };
 
-  // Dictate if some form has changed its status
   var setInputValues = function(form) {
     return $('ul.dropdown-menu input[type="checkbox"]', form).
       map(function() {
@@ -190,7 +152,7 @@ SocialStream.Contact = (function($, SS, undefined) {
       success: function(data) {
         $('#contacts-loading').hide();
          currentTab.find('.contact-list').html(data);
-        index();
+        callback.handlers.index();
       }
     });
   };
@@ -199,9 +161,32 @@ SocialStream.Contact = (function($, SS, undefined) {
     $('#contacts-loading').hide();
   };
 
+  var initNewGroupModal = function() {
+    $('.new_group-modal-link').attr('href', '#new_group-modal');
+  };
+
   var initContactFormsHtmlListener = function() {
     $('html').on('click.dropdown.data-api', saveForms);
   };
+
+  // new_ callbacks
+  
+  var initHideModal = function() {
+    $('#add-contact-modal').on('hide', function () {
+      $('input[name="actors"]').select2('close');
+      $('select[name="relations[]"]').select2('close');
+    });
+  };
+
+  var initActorSelect2 = function() {
+    SS.Actor.select2('input[name="actors"]');
+  };
+
+  var initRelationSelect2 = function() {
+    $('select[name="relations[]"]').select2();
+  };
+
+  // update callbacks
 
   var updateForms = function(options) {
     var forms = getForms(options.id);
@@ -245,7 +230,7 @@ SocialStream.Contact = (function($, SS, undefined) {
         $(contact).fadeOut('slow', function() {
           $(data).replaceAll(contact).fadeIn();
 
-          initContactButtons();
+          initMultipleButtons();
         });
       }
     });
@@ -297,28 +282,51 @@ SocialStream.Contact = (function($, SS, undefined) {
     callback([ { id: element.val(), name: element.attr('data-recipient-name') } ]);
   };
 
-  addIndexCallback(initTabs);
-  addIndexCallback(initContactButtons);
-  addIndexCallback(initFilter);
-  addIndexCallback(hideLoading);
+  var initSimpleButtons = function(){
+    $(".following-button").mouseenter(function(){
+      $(this).hide();
+      $(this).siblings(".unfollow-button").show();
+    });
 
-  addUpdateCallback(updateForms);
-  addUpdateCallback(replaceContact);
-  addUpdateCallback(checkAndHideContact);
+    $(".unfollow-button").mouseleave(function(){
+      $(this).hide();
+      $(this).siblings(".following-button").show();
+    });
 
-  addDestroyCallback(hideContact);
+    $(".unfollow-button").hide();
+  };
+
+  callback.register('index',
+                    initTabs,
+                    initMultipleButtons,
+                    initSimpleButtons,
+                    initFilter,
+                    initNewGroupModal,
+                    hideLoading);
+
+  callback.register('new_',
+                    initHideModal,
+                    initActorSelect2,
+                    initRelationSelect2);
+
+  callback.register('update',
+                    updateForms,
+                    replaceContact,
+                    initSimpleButtons,
+                    checkAndHideContact);
+
+  callback.register('destroy',
+                    initSimpleButtons,
+                    hideContact);
 
   // FIXME There is probably a more efficient way to do this..
   $(function() {
-    initContactButtons();
+    initMultipleButtons();
+    initSimpleButtons();
     initContactFormsHtmlListener();
   });
 
-  return {
-    index: index,
-    show: show,
-    update: update,
-    select2: select2,
-    destroy: destroy
-  };
+  return callback.extend({
+    select2: select2
+  });
 })(jQuery, SocialStream);

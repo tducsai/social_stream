@@ -1,44 +1,118 @@
-<%= render partial: 'toolbar/home' %>
+<section id="site_client">
+  <%= render partial: 'toolbar/home' %>
 
-<section id="oauth2_server">  
-  <h1>
-    <%= @client.name %>
-  </h1>
+  <section class="site_client" id="<%= dom_id resource %>">
+    <header>  
+      <h4>
+        <%= resource.name %>
 
-  <hr class="soften">
-  <div class="content">
-    <a class="pull-left" href="#">
-        <img class="media-object" alt="application image" style="width: 100px; height: 100px;" src="assets/user.png">
-    </a>
-    <article  class="media box">
-      <div class="media-body">
+        <% if can?(:update, resource) %>
+          <%= link_to t('site.client.button.edit'), polymorphic_path(resource, action: 'edit'), class: "edit" %>
+        <% end %>
+      </h4>
+
+      <%= image_tag(resource.logo.url(:medium), class: "logo-app pull-right") %>
+
+    </header>
+
+    <div class="content">
+      <div class="gereral-info">      
+        <h4>
+          <%= Site::Client.human_attribute_name :description %>
+        </h4>
+        <div class="result">
+          <%= resource.description%>
+        </div>
+
         <h4>
           <%= Site::Client.human_attribute_name :url %>
         </h4>
         <div class="result">
-          <%= link_to @client.url, @client.url%>
+          <%= link_to resource.url, resource.url%>
         </div>
-        <h4>
-          <%= Site::Client.human_attribute_name :callback_url %>
-        </h4>
-        <div class="result">
-          <%= @client.callback_url %>
-        </div>
-        <h4>
-          <%= Site::Client.human_attribute_name :id %>
-        </h4>
-        <div class="result">
-          <%= @client.id %>
-        </div>
-        <h4>
-          <%= Site::Client.human_attribute_name :secret %>
-        </h4>
-        <div class="result client_secret">
-          <p>
-            <%= @client.secret %>
-          </p>
-        </div>
+
+        <% if can? :update, resource %>
+          <h4>
+            <%= Site::Client.human_attribute_name :callback_url %>
+          </h4>
+          <div class="result">
+            <%= resource.callback_url %>
+          </div>
+        <% end %>
       </div>
-    </article>
+        
+      <% if can? :update_secret, resource %>
+        <div class="accordion" id="accordion2">
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+                <%= t 'site.client.oauth.credentials' %>
+              </a>
+            </div>
+            <div id="collapseOne" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <div class="content settings_content collapse in">
+                  <div class="result">
+                    <div class="client-id">
+                      <h6>
+                        <%= Site::Client.human_attribute_name :id %>
+                      </h6>
+                      <p>
+                        <%= resource.id %>
+                      </p>
+                    </div>
+                    <div class="client-secret">
+                      <h6>
+                        <%= Site::Client.human_attribute_name :secret %>
+                        <%= form_tag update_secret_site_client_path(resource, format: :json), class: "site-client-secret" do %>
+                          <%= submit_tag t('site.client.oauth.secret.refresh'), class: 'pull-right' %>
+                        <% end %>
+                      </h6>
+                      <p>
+                        <span class="site-client-secret"><%= resource.secret %></span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <div class="tabbable"> <!-- Only required for left/right tabs -->
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#authorized" data-toggle="tab">Authorized</a></li>
+    </ul>
+    
+  <!--
+    <div class="btn-group" data-toggle="buttons">
+      <button type="radio" name="options" id="option1">user</button>
+      <button type="radio" name="options" id="option2"">organization</button>
+    </div>
+
+     <%= text_field_tag "contact-filter", "", placeholder: "filter", autocomplete: "off" %>
+    -->
+
+    <div class="tab-content">
+      <div class="tab-pane active" id="authorized">
+
+        <%= render partial: 'contacts/add_button',
+                   locals: {
+                     sender: resource,
+                     type: [ :user, :group ]
+                   }
+        %>
+
+        <%= render partial: 'contacts/contact',
+                   collection: resource.sent_contacts.first(12) %>
+      </div>
+    </div>
   </div>
+
+  <%= javascript_tag do %>
+    SocialStream.SiteClient.show();
+  <% end %>
 </section>

@@ -30,10 +30,6 @@ class Actor < ActiveRecord::Base
   acts_as_url :name, :url_attribute => :slug
 
   serialize :notification_settings
-  def notification_settings
-    self.update_attribute(:notification_settings, SocialStream.default_notification_settings) unless super
-    super
-  end
 
   has_one :profile,
           dependent: :destroy,
@@ -57,10 +53,22 @@ class Actor < ActiveRecord::Base
            :through => :received_contacts,
            :source  => :ties
 
+  has_many :sent_relations,
+           :through => :sent_ties,
+           :source  => :relation
+
   has_many :received_relations,
            :through => :received_ties,
            :source  => :relation
-  
+
+  has_many :sent_permissions,
+           :through => :sent_relations,
+           :source  => :permissions
+
+  has_many :received_permissions,
+           :through => :received_relations,
+           :source  => :permissions
+ 
   has_many :senders,
            :through => :received_contacts,
            :uniq => true
@@ -126,6 +134,12 @@ class Actor < ActiveRecord::Base
     joins(:received_contacts).merge(Contact.active.sent_by(a))
   }
 
+  scope :not_contacted_from, lambda { |a|
+    if a.present?
+      where(arel_table[:id].not_in(a.sent_active_contact_ids + [a.id]))
+    end
+  }
+
   scope :followed, joins(:activity_object).merge(ActivityObject.followed)
 
   scope :followed_by, lambda { |a|
@@ -137,7 +151,7 @@ class Actor < ActiveRecord::Base
 
   scope :subject_type, lambda { |t|
     if t.present?
-      where(subject_type: t.classify)
+      where(subject_type: t.split(',').map(&:classify))
     end
   }
 
@@ -204,6 +218,35 @@ class Actor < ActiveRecord::Base
   # All {Relation relations} with the 'notify' permission
   def relation_notifys
     relations.joins(:relation_permissions => :permission).where('permissions.action' => 'notify')
+  end
+
+  # The relations that will appear in privacy forms
+  #
+  # They usually include {Relation::Custom} but may also include other system-defined
+  # relations that are not editable but appear in add contact buttons
+  def relations_list
+    Relation.system_list(subject) + relation_customs
+  end
+
+  # The relations offered in the "Add contact" button when subjects
+  # add new contacts
+  def relations_for_select
+    relations_list
+  end
+
+  # Return an object of choices suitable for the contact add button or modal
+  def options_for_contact_select
+    relations_for_select.map{ |r| [ r.name, r.id ] }
+  end
+
+  # Options for contact select are simple
+  def options_for_contact_select_simple?
+    relations_list.count == 1
+  end
+
+  # Returns the type for contact select, :simple or :multiple
+  def options_for_contact_select_type
+    options_for_contact_select_simple? ? :simple : :multiple
   end
 
   # All the {Actor Actors} this one has ties with:
@@ -273,7 +316,7 @@ class Actor < ActiveRecord::Base
     if options[:relations].present?
       as = as.merge(Tie.related_by(options[:relations]))
     else
-      as = as.merge(Relation.where(:type => ['Relation::Custom', 'Relation::Public']))
+      as = as.merge(Relation.positive)
     end
     
     as
@@ -308,7 +351,7 @@ class Actor < ActiveRecord::Base
   # Return a contact to subject. Create it if it does not exist
   def contact_to!(subject)
     contact_to(subject) ||
-      sent_contacts.create!(:receiver => Actor.normalize(subject))
+      sent_contacts.create!(receiver_id: Actor.normalize_id(subject))
   end
 
   # The {Contact} of this {Actor} to self (totally close!)
@@ -340,7 +383,7 @@ class Actor < ActiveRecord::Base
   end
 
   # Does this {Actor} allow subject to perform action on object?
-  def allow?(subject, action, object)
+  def allow?(subject, action, object = nil)
     ties_to(subject).with_permissions(action, object).any?
   end
 
@@ -353,6 +396,10 @@ class Actor < ActiveRecord::Base
   def action_to!(activity_object)
     action_to(activity_object) ||
       sent_actions.create!(:activity_object => ActivityObject.normalize(activity_object))
+  end
+
+  def sent_active_contact_count
+    sent_contacts.active.count
   end
 
   def sent_active_contact_ids
@@ -410,11 +457,21 @@ class Actor < ActiveRecord::Base
 
   # The default {Relation Relations} for sharing an {Activity} owned
   # by this {Actor}
+  #
+  # Activities are shared with all the contacts by default.
+  #
+  # You can change this behaviour with a decorator, overwriting this method.
+  # For example, if you want the activities shared publicly by default, create
+  # a decorator in app/decorators/actor_decorator.rb with
+  #   Actor.class_eval do
+  #     def activity_relations
+  #       [ Relation::Public.instance ]
+  #     end
+  #   end
+  #
   def activity_relations
-    SocialStream.relation_model == :custom ?
-      relations.
-        allowing('read', 'activity') :
-      [ Relation::Public.instance ]
+    relations.
+      allowing('read', 'activity')
   end
 
   # The ids of the default {Relation Relations} for sharing an {Activity}
@@ -492,7 +549,12 @@ class Actor < ActiveRecord::Base
       }
     }
   end
-  
+
+  def notification_settings
+    self.update_attribute(:notification_settings, SocialStream.default_notification_settings) unless super
+    super
+  end
+
   private
   
   # After create callback

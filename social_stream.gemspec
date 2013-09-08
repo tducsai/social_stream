@@ -8,15 +8,16 @@ Gem::Specification.new do |s|
   s.authors = [ "GING - DIT - UPM" ]
   s.homepage = "http://social-stream.dit.upm.es/"
   s.files = `git ls-files`.split("\n")
+  s.license = 'MIT'
 
   # Gem dependencies
-  s.add_runtime_dependency('social_stream-base', '~> 2.0.0')
-  s.add_runtime_dependency('social_stream-documents', '~> 2.0.0')
-  s.add_runtime_dependency('social_stream-events', '~> 2.0.0')
-  s.add_runtime_dependency('social_stream-linkser', '~> 2.0.0')
-  s.add_runtime_dependency('social_stream-presence', '~> 2.0.0')
-  s.add_runtime_dependency('social_stream-ostatus', '~> 2.0.0')
-  s.add_runtime_dependency('social_stream-oauth2_server')
+  s.add_runtime_dependency('social_stream-base', '~> 2.2.1')
+  s.add_runtime_dependency('social_stream-documents', '~> 2.2.0')
+  s.add_runtime_dependency('social_stream-events', '~> 2.2.0')
+  s.add_runtime_dependency('social_stream-linkser', '~> 2.2.0')
+  s.add_runtime_dependency('social_stream-presence', '~> 2.2.0')
+  s.add_runtime_dependency('social_stream-ostatus', '~> 2.2.0')
+  s.add_runtime_dependency('social_stream-oauth2_server', '~> 2.2.1')
  
   # Development Gem dependencies
   #

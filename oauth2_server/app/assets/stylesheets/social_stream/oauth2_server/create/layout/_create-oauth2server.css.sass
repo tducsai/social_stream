@@ -1,3 +1,9 @@
+.new_site_client
+  @include grid-core-span(10, $fluidGridColumnWidth, $fluidGridGutterWidth)
+  float: left
+  margin-left: 2.5%
+  img
+    width: 70%
 #content
   .box
     padding: 14px 20px 74px 20px
@@ -14,6 +20,16 @@
       height: 135px
       margin-top: -131px
 
-
-
+#site_client_form
+  .description,
+  .url,
+  .callback_url
+    textarea
+      height: 20px
+  .description
+    textarea
+      height: 60px
+.next-step
+  @include btn-secundary
+  float: right
 

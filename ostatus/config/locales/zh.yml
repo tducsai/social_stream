@@ -1,0 +1,35 @@
+---
+zh:
+  activity:
+    verb:
+      follow:
+        RemoteSubject:
+          message: '%{name} added you as contact.'
+          notification:
+            body: '%{name} added you as contact.'
+            subject: '%{name} added you as contact.'
+          title: '%{subject} added %{contact} as contact.'
+      like:
+        RemoteSubject:
+          message: '%{name} is now your fan.'
+          notification:
+            body: '%{name} is now your fan.'
+            subject: '%{name} is now your fan.'
+          title: '%{subject} is a fan of %{contact}.'
+      make-friend:
+        RemoteSubject:
+          message: '%{name} also added you as contact.'
+          notification:
+            body: '%{name} also added you as contact.'
+            subject: '%{name} also added you as contact.'
+          title: '%{subject} and %{contact} are now connected.'
+      post:
+        RemoteSubject:
+          notification:
+            body: '%{name} has posted something(%{direct_object}) in your wall'
+            subject: '%{name} has posted something(%{direct_object}) in your wall'
+      update:
+        RemoteSubject:
+          notification:
+            body: '%{name} has updated something(%{direct_object}) in your wall'
+            subject: '%{name} has updated %{direct_object} in your wall'
